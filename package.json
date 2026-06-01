@@ -1,0 +1,16 @@
+{
+  "name": "continuum",
+  "version": "1.0.0",
+  "description": "Continuum Synthesizer",
+  "main": "synth.js",
+  "scripts": {
+    "dev": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "chokidar": "^5.0.0"
+  }
+}

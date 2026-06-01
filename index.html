@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Continuum</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="app-header">
+      <div class="title-block">
+        <span class="title">CONTINUUM</span>
+        <span class="subtitle">SYNTHESIZER</span>
+      </div>
+      <button class="play-all-btn" id="playAllBtn">
+        <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="5,3 19,12 5,21"/>
+        </svg>
+        PLAY ALL
+      </button>
+    </header>
+    <div class="groups-grid" id="groupsGrid"></div>
+    <div id="effectsSection"></div>
+  </div>
+  <script src="effects.js"></script>
+  <script src="synth.js"></script>
+</body>
+</html>
