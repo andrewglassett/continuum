@@ -68,6 +68,12 @@ body {
   color: var(--text-dim);
 }
 
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .play-all-btn {
   display: flex;
   align-items: center;
@@ -93,6 +99,29 @@ body {
   background: #fff;
   border-color: #fff;
   color: #000;
+}
+
+.randomize-groups-btn {
+  padding: 10px 24px;
+  background: transparent;
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.randomize-groups-btn:hover {
+  border-color: #fff;
+  color: #fff;
+  background: color-mix(in srgb, #fff 5%, transparent);
+}
+
+.randomize-groups-btn:active {
+  background: color-mix(in srgb, #fff 15%, transparent);
 }
 
 .play-icon {

@@ -260,6 +260,81 @@ async function ensureEngine() {
 const PLAY_SVG = `<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><polygon points="5,3 19,12 5,21"/></svg>`;
 const STOP_SVG = `<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>`;
 
+async function randomizeGroups() {
+  await ensureEngine();
+  const r = (a, b) => a + Math.random() * (b - a);
+  const rl = (a, b) => a * Math.pow(b / a, Math.random());
+  const chordIdx = Math.floor(Math.random() * (CHORDS.length - 1)) + 1; // skip "—"
+
+  for (let g = 0; g < NUM_GROUPS; g++) {
+    const group = document.querySelector(`.group-panel[data-group="${g}"]`);
+    if (!group) continue;
+
+    // Randomize group volume
+    const volSlider = group.querySelector('.group-vol-row input[type="range"]');
+    if (volSlider) {
+      const vol = r(20, 100);
+      volSlider.value = vol;
+      engine.setGroupVolume(g, vol / 100);
+    }
+
+    // Randomize panning
+    const panSlider = group.querySelector('.group-pan-row input[type="range"]');
+    if (panSlider) {
+      const pan = r(-100, 100);
+      panSlider.value = pan;
+      engine.setPanning(g, pan / 100);
+    }
+
+    // Randomize dry level
+    const dryInputs = group.querySelectorAll('.send-section input[type="range"]');
+    if (dryInputs[0]) {
+      const dry = r(40, 100);
+      dryInputs[0].value = dry;
+      engine.setDryLevel(g, dry / 100);
+    }
+
+    // Randomize send amount
+    if (dryInputs[1]) {
+      const send = r(0, 100);
+      dryInputs[1].value = send;
+      engine.groups[g].sendGain.gain.setTargetAtTime(send / 100, engine.ctx.currentTime, 0.02);
+    }
+
+    // Randomize chord root frequency
+    const rootFreq = rl(40, 880);
+    const rootSlider = group.querySelector('.chord-root-display')?.parentElement?.querySelector('input[type="range"]');
+    if (rootSlider) {
+      rootSlider.value = freqToSlider(rootFreq);
+      groupRootRefs[g].freq = rootFreq;
+      groupRootRefs[g].display.textContent = `${Math.round(rootFreq)} Hz · ${freqToNoteLabel(rootFreq)}`;
+    }
+
+    // Randomize chord type
+    const chordSelect = group.querySelector('.chord-select');
+    if (chordSelect) {
+      chordSelect.value = chordIdx;
+      const semitones = CHORDS[chordIdx].semitones;
+      if (semitones) applyChordToUI(g, rootFreq, semitones);
+    }
+
+    // Randomize voice waveforms and volumes
+    for (let v = 0; v < VOICES_PER_GROUP; v++) {
+      // Random waveform
+      const wfBtn = group.querySelectorAll('.wf-btn-group .waveform-btn')[Math.floor(Math.random() * 4)];
+      if (wfBtn) wfBtn.click();
+
+      // Random voice volume
+      const volInputs = group.querySelectorAll('.voice-card input[type="range"]');
+      if (volInputs[v * 2 + 1]) { // skip pitch slider, get volume slider
+        const voiceVol = r(20, 100);
+        volInputs[v * 2 + 1].value = voiceVol;
+        engine.setVoiceVolume(g, v, voiceVol / 100);
+      }
+    }
+  }
+}
+
 function buildUI() {
   const playAllBtn = document.getElementById('playAllBtn');
   let allPlaying = false;
@@ -288,6 +363,9 @@ function buildUI() {
       });
     }
   });
+
+  const randomizeGroupsBtn = document.getElementById('randomizeGroupsBtn');
+  randomizeGroupsBtn.addEventListener('click', randomizeGroups);
 
   const grid = document.getElementById('groupsGrid');
   for (let g = 0; g < NUM_GROUPS; g++) {
